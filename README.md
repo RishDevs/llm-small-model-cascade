@@ -48,4 +48,4 @@ See [docs/PROJECT.md](docs/PROJECT.md) for the full design, setup steps and open
 
 ## License
 
-The Banking77 dataset is licensed under CC BY 4.0.
+Code: [MIT](LICENSE). The Banking77 dataset is licensed separately under CC BY 4.0.
