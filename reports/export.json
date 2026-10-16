@@ -1,0 +1,11 @@
+{
+  "checked_on": "validation (3100 utterances)",
+  "onnx_fp32": {
+    "size_mb": 256.7,
+    "argmax_match_vs_torch": 1.0
+  },
+  "onnx_int8": {
+    "size_mb": 64.9,
+    "argmax_match_vs_torch": 0.9684
+  }
+}

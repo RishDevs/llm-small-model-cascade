@@ -8,3 +8,5 @@ __pycache__/
 # large / generated
 data/
 artifacts/
+*.onnx
+.pytest_cache/

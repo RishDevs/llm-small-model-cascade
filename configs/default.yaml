@@ -1,0 +1,43 @@
+seed: 13
+
+data:
+  dataset: clinc/clinc_oos
+  subset: plus
+
+paths:
+  teacher_dir: data/teacher
+  student_dir: artifacts/student
+  onnx_fp32: artifacts/student.onnx
+  onnx_int8: artifacts/student.int8.onnx
+  routing: artifacts/routing.json
+  reports: reports
+
+teacher:
+  backend: vllm
+  model: Qwen/Qwen2.5-7B-Instruct-AWQ
+  max_model_len: 2048
+  gpu_memory_utilization: 0.90
+  chunk_size: 2048
+  base_url: http://localhost:11434/v1
+  api_model: qwen2.5:7b-instruct
+  api_extra: {}
+  workers: 4
+  timeout: 30
+
+student:
+  base: distilbert-base-uncased
+  max_length: 64
+  batch_size: 32
+  epochs: 4
+  lr: 5.0e-5
+  weight_decay: 0.01
+  warmup: 0.06
+
+routing:
+  max_disagreement: 0.01
+  ece_bins: 15
+
+bench:
+  threads: [1, 4]
+  warmup: 50
+  runs: 1000

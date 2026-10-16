@@ -1,0 +1,30 @@
+{
+  "backend": "http",
+  "model": "qwen3.8",
+  "splits": {
+    "validation": {
+      "labeled": 3100,
+      "of": 3100,
+      "invalid_rate": 0.0,
+      "accuracy": 0.9065,
+      "oos_recall": 0.89,
+      "minutes": 96.64
+    },
+    "test": {
+      "labeled": 5500,
+      "of": 5500,
+      "invalid_rate": 0.0,
+      "accuracy": 0.8909,
+      "oos_recall": 0.888,
+      "minutes": 208.56
+    },
+    "train": {
+      "labeled": 15250,
+      "of": 15250,
+      "invalid_rate": 0.0,
+      "accuracy": 0.8983,
+      "oos_recall": 0.94,
+      "minutes": 658.06
+    }
+  }
+}

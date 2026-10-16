@@ -1,0 +1,26 @@
+{
+  "device": "mps",
+  "examples": 15250,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 3.0970830947348156,
+      "val_agreement": 0.737741935483871
+    },
+    {
+      "epoch": 2,
+      "loss": 0.8730764140373006,
+      "val_agreement": 0.8132258064516129
+    },
+    {
+      "epoch": 3,
+      "loss": 0.4958850872904,
+      "val_agreement": 0.83
+    },
+    {
+      "epoch": 4,
+      "loss": 0.34395475507532275,
+      "val_agreement": 0.832258064516129
+    }
+  ]
+}

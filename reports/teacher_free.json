@@ -1,0 +1,14 @@
+{
+  "backend": "http",
+  "model": "qwen2.5:7b-instruct",
+  "splits": {
+    "train": {
+      "labeled": 2000,
+      "of": 2000,
+      "invalid_rate": 0.0045,
+      "accuracy": 0.678,
+      "oos_recall": null,
+      "minutes": 3.37
+    }
+  }
+}

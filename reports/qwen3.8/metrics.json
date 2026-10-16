@@ -1,0 +1,60 @@
+{
+  "onnx": "student.int8.onnx",
+  "temperature": 0.9419,
+  "threshold": 0.961142,
+  "max_disagreement": 0.01,
+  "validation": {
+    "coverage": 71.74,
+    "disagreement": 1.0
+  },
+  "test": {
+    "n": 5500,
+    "coverage": 68.04,
+    "gap_pp": 0.18,
+    "oos_recall_gain_pp": 10.3,
+    "student_teacher_agreement": 89.05,
+    "cascade_teacher_agreement": 98.75,
+    "escalated_oos_share": 30.38,
+    "teacher": {
+      "accuracy": 89.09,
+      "in_scope_accuracy": 89.16,
+      "oos_recall": 88.8
+    },
+    "student": {
+      "accuracy": 85.69,
+      "in_scope_accuracy": 87.11,
+      "oos_recall": 79.3
+    },
+    "cascade": {
+      "accuracy": 89.27,
+      "in_scope_accuracy": 89.2,
+      "oos_recall": 89.6
+    }
+  },
+  "calibration_vs_teacher": {
+    "before": {
+      "ece": 0.0207,
+      "nll": 0.4493,
+      "brier": 0.1689
+    },
+    "after": {
+      "ece": 0.0273,
+      "nll": 0.4478,
+      "brier": 0.1698
+    },
+    "ece_reduction_pct": -31.88
+  },
+  "calibration_vs_gold": {
+    "before": {
+      "ece": 0.0465,
+      "nll": 0.6775,
+      "brier": 0.2311
+    },
+    "after": {
+      "ece": 0.0586,
+      "nll": 0.6901,
+      "brier": 0.2327
+    },
+    "ece_reduction_pct": -26.02
+  }
+}
