@@ -23,7 +23,7 @@ Results are on the CLINC150 test split (5,500 utterances, 18% out-of-scope). The
 - **Student latency:** 1.9 ms p50 and 3.1 ms p95, at batch size 1 on one CPU thread (Apple M4 Pro, INT8). FP32 runs at 3.6 ms.
 - **INT8:** 257 MB → 65 MB, with 98.3% prediction agreement with the FP32 PyTorch model.
 - **Labeling:** all 23,850 utterances took about 16 hours on a laptop, at zero cost, with 0 invalid outputs.
-- **Calibration tradeoff:** the student was already well calibrated against the teacher (ECE 0.021). Temperature scaling (T = 0.94) raised ECE to 0.027 but improved log-loss and added 0.7 pp of coverage at the same accuracy. See [docs/PROJECT.md §6](docs/PROJECT.md#6-calibration-tradeoff).
+- **Calibration tradeoff:** the temperature is chosen to minimize validation log-loss against the teacher's labels, not ECE. The two objectives disagreed here. The student was already well calibrated (ECE 0.021). T = 0.94 lowered test log-loss (0.4493 → 0.4478) but raised ECE to 0.027. I kept it because routing is what the system is for: with the threshold re-picked on validation, it raised coverage from 67.3% to 68.0% at the same 89.27% accuracy. See [docs/PROJECT.md §6](docs/PROJECT.md#6-calibration-tradeoff).
 
 **Teacher comparison: same pipeline, same 1% budget**
 
