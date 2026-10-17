@@ -9,8 +9,9 @@ This page is the technical reference for the cascade: data, pipeline stages, con
 3. [Configuration](#3-configuration)
 4. [Outputs](#4-outputs)
 5. [Metrics and how they're defined](#5-metrics-and-how-theyre-defined)
-6. [Zero-cost choices and their tradeoffs](#6-zero-cost-choices-and-their-tradeoffs)
-7. [Design choices still open](#7-design-choices-still-open)
+6. [Calibration tradeoff](#6-calibration-tradeoff)
+7. [Zero-cost choices and their tradeoffs](#7-zero-cost-choices-and-their-tradeoffs)
+8. [Design choices still open](#8-design-choices-still-open)
 
 ---
 
@@ -93,7 +94,53 @@ All settings live in `configs/default.yaml`, which runs the Qwen2.5-7B teacher. 
 
 **Coverage on test vs validation.** Test has 18% out-of-scope utterances against 3% in validation, so coverage can differ between them. In the main run it was 71.7% on validation and 68.0% on test.
 
-## 6. Zero-cost choices and their tradeoffs
+## 6. Calibration tradeoff
+
+Temperature scaling is fitted on validation to minimize negative log-likelihood (NLL) against the teacher's labels. In both runs it moved the metrics in different directions.
+
+**Qwen3.8 run (main), test split**
+
+| Measured against | Metric | Before (T = 1) | After (T = 0.94) |
+|---|---|---|---|
+| Teacher labels | ECE | 0.0207 | 0.0273 |
+| | NLL | 0.4493 | **0.4478** |
+| | Brier | 0.1689 | 0.1698 |
+| Gold labels | ECE | 0.0465 | 0.0586 |
+| | NLL | 0.6775 | 0.6901 |
+| | Brier | 0.2311 | 0.2327 |
+| Routing (1% budget) | Coverage | 67.31% | **68.04%** |
+| | Cascade accuracy | 89.27% | 89.27% |
+
+**Qwen2.5-7B run, test split**
+
+| Measured against | Metric | Before (T = 1) | After (T = 0.92) |
+|---|---|---|---|
+| Teacher labels | ECE | 0.0214 | 0.0298 |
+| | NLL | 0.6833 | **0.6767** |
+| Gold labels | ECE | 0.1076 | 0.1343 |
+| Routing (1% budget) | Coverage | 44.78% | **44.98%** |
+| | Cascade accuracy | 72.56% | 72.60% |
+
+**What this means**
+
+- **The student starts out calibrated.** Training on the teacher's hard labels for 4 epochs, with weight decay, left top-1 confidence close to agreement with the teacher (ECE ≈ 0.02 in both runs). There was little overconfidence for temperature scaling to remove.
+- **The fit goes the "wrong" way for ECE.** T < 1 sharpens the probabilities. That is what minimizes NLL on validation, and test NLL against the teacher improved too, but slightly. ECE only looks at binned top-1 confidence, and it got worse.
+- **It hurts calibration against gold.** T is fitted to the teacher's labels, so sharpening toward the teacher moves confidence away from gold correctness wherever the teacher is wrong. All gold metrics got slightly worse.
+- **It helps routing.** Temperature changes how confidences rank across utterances, not just their scale. Re-picking τ on the rescaled confidences let the student take 0.7 pp more traffic (0.2 pp in the 7B run) under the same disagreement budget, with no accuracy cost.
+- **Decision.** I keep temperature scaling in the pipeline. It's one parameter and cannot change a prediction, and on this data it slightly improves the thing the system is for: routing. The ECE increase is reported, not hidden.
+
+**Options I didn't take**
+
+| Option | Tradeoff |
+|---|---|
+| Skip calibration (T = 1) | Better ECE; 0.7 pp less coverage in the main run |
+| Fit T against gold labels | Should improve gold ECE, but needs human labels at deployment |
+| Fit T by minimizing ECE directly | Optimizes a binned, non-smooth metric, which is easy to overfit with 3,100 examples |
+| Train longer, then calibrate | Would produce a large ECE reduction only by first making the student overconfident |
+
+---
+
+## 7. Zero-cost choices and their tradeoffs
 
 | Need | Free choice | Tradeoff |
 |---|---|---|
@@ -104,7 +151,7 @@ All settings live in `configs/default.yaml`, which runs the Qwen2.5-7B teacher. 
 | Serving | FastAPI + uvicorn | No auth, rate limiting or autoscaling |
 | Tracking | JSON reports + git | No dashboard |
 
-## 7. Design choices still open
+## 8. Design choices still open
 
 - **Disagreement budget.** `routing.max_disagreement` sets the tradeoff. Raising it means more coverage and a larger possible accuracy gap. `reports/coverage.png` shows the whole curve, so the choice can be made from data.
 - **Calibration target.** Temperature is fitted against teacher labels, so confidence means "chance the teacher would agree". Fitting against gold validation labels is a one-line change, but it assumes you have human labels at deployment time.

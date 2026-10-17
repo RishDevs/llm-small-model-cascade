@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "llm-small-model-cascade"
 version = "0.1.0"
-description = "Distill a 7B LLM into an INT8 DistilBERT student and route low-confidence requests back to the LLM"
+description = "Distill a 27.8B Qwen LLM into an INT8 DistilBERT student and route low-confidence requests back to the LLM"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10,<3.14"

@@ -1,6 +1,6 @@
 # LLM → Small Model Cascade
 
-Sending every classification request to a large LLM is slow and expensive. Most requests are easy, though. This project distills an open LLM into a small INT8 DistilBERT model that runs in milliseconds on a CPU. Each request is routed on calibrated confidence: the small model answers when it is sure, and the request goes to the LLM when it isn't.
+Sending every classification request to a large LLM is slow and expensive. Most requests are easy, though. This project distills an open LLM into a small INT8 DistilBERT model that runs in milliseconds on a CPU. Each request is routed on temperature-scaled confidence: the small model answers when it is sure, and the request goes to the LLM when it isn't.
 
 Task: intent classification on [CLINC150](https://huggingface.co/datasets/clinc/clinc_oos), which has 150 intents plus an out-of-scope class.
 
@@ -23,7 +23,7 @@ Results are on the CLINC150 test split (5,500 utterances, 18% out-of-scope). The
 - **Student latency:** 1.9 ms p50 and 3.1 ms p95, at batch size 1 on one CPU thread (Apple M4 Pro, INT8). FP32 runs at 3.6 ms.
 - **INT8:** 257 MB → 65 MB, with 98.3% prediction agreement with the FP32 PyTorch model.
 - **Labeling:** all 23,850 utterances took about 16 hours on a laptop, at zero cost, with 0 invalid outputs.
-- **Calibration:** the student was already well calibrated against the teacher (ECE 0.021). Temperature scaling (T = 0.94) slightly improved log-loss and slightly worsened ECE (0.027).
+- **Calibration tradeoff:** the student was already well calibrated against the teacher (ECE 0.021). Temperature scaling (T = 0.94) raised ECE to 0.027 but improved log-loss and added 0.7 pp of coverage at the same accuracy. See [docs/PROJECT.md §6](docs/PROJECT.md#6-calibration-tradeoff).
 
 **Teacher comparison: same pipeline, same 1% budget**
 

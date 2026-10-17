@@ -411,6 +411,7 @@ Dividing by `T` never changes which entry is largest, so **temperature scaling c
 - NLL is convex in `1/T`, so this one-dimensional search finds the global minimum.
 - Only one number is learned from 3,100 examples, so it is very hard to overfit. More flexible methods (vector scaling would learn 302 numbers) can fit validation better and test worse.
 - `test_fit_recovers_known_temperature` generates labels from a known T = 2.5 and checks that the fit recovers it to within 0.15.
+- In both real runs, T came out just below 1 (0.92 and 0.94). That improved NLL and routing coverage slightly, and made ECE slightly worse. [PROJECT.md §6](PROJECT.md#6-calibration-tradeoff) has the numbers and the reasoning.
 
 ### `reliability` and `ece` (load-bearing)
 
