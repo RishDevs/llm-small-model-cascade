@@ -1,3 +1,5 @@
+<img src=".github/header.svg" width="100%" alt="llm-small-model-cascade — Small-Model Cascade — README header">
+
 # LLM → Small Model Cascade
 
 Sending every classification request to a large LLM is slow and expensive. Most requests are easy, though. This project distills an open LLM into a small INT8 DistilBERT model that runs in milliseconds on a CPU. Each request is routed on temperature-scaled confidence: the small model answers when it is sure, and the request goes to the LLM when it isn't.
